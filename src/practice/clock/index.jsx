@@ -1,16 +1,42 @@
-/* eslint-disable */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-function tick() {
-  const element = (
-    <div>
-      <h1>Hello, world!</h1>
-      <h2>It is {new Date().toLocaleTimeString()}.</h2>
-    </div>
-  );
-  ReactDOM.render(element, document.getElementById('root'));
+class Clock extends React.Component {
+  state = {
+    date: new Date(),
+  };
+
+  componentDidMount() {
+    this.timerID = setInterval(
+      this.tick, // evitamos crear una funcion demas porque ya se guarda el this
+      1000,
+    );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
+  tick = () => this.setState({ date: new Date() });
+
+  handleUpdate = (e) => {
+    e.preventDefault();
+    this.tick();
+  };
+
+  render() {
+    const { date } = this.state;
+    return (
+      <React.Fragment>
+        <h1>Hello, world!</h1>
+        <h2>{date.toLocaleTimeString()}</h2>
+        <button type="submit" onClick={this.handleUpdate}>
+          Update
+        </button>
+      </React.Fragment>
+    );
+  }
 }
 
-// Llama a ReactDOM.render() cada 1000 milisegundo.
-setInterval(tick, 1000);
+ReactDOM.render(<Clock />, document.getElementById('root'));

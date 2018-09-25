@@ -1,38 +1,100 @@
-/* eslint-disable */
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 
-function formatDate(date){
-  return date.toDateString();
+function Avatar({ author }) {
+  return (
+    <img
+      className="Avatar"
+      src={author.avatarUrl}
+      alt={author.name}
+    />
+  );
 }
 
-function Comment(props) {
+Avatar.propTypes = {
+  author: PropTypes.shape({
+    name: PropTypes.string,
+    avatarUrl: PropTypes.string.isRequired,
+  }).isRequired,
+};
+
+function UserInfo({ author }) {
   return (
-    <div className="Comment">
-      <div className="UserInfo">
-        <img className="Avatar"
-          src={props.author.avatarUrl}
-          alt={props.author.name}
-        />
-        <div className="UserInfo-name">
-          {props.author.name}
-        </div>
-      </div>
-      <div className="Comment-text">
-        {props.text}
-      </div>
-      <div className="Comment-date">
-        {formatDate(props.date)}
+    <div className="UserInfo">
+      <Avatar author={author} />
+      <div className="UserInfo-name">
+        {author.name}
       </div>
     </div>
   );
 }
 
+UserInfo.propTypes = {
+  author: PropTypes.shape({
+    name: PropTypes.string,
+    avatarUrl: PropTypes.string.isRequired,
+  }).isRequired,
+};
+class CommentDate extends React.Component {
+  static propTypes = {
+    date: PropTypes.instanceOf(Date),
+  }
+
+  formatDate = () => {
+    const { date } = this.props;
+    return date.toDateString();
+  }
+
+  render() {
+    return (
+      <div className="Comment-date">
+        {this.formatDate()}
+      </div>
+    );
+  }
+}
+
+CommentDate.propTypes = {
+  date: PropTypes.instanceOf(Date),
+};
+
+CommentDate.defaultProps = {
+  date: new Date(),
+};
+
+function Comment({ author, date, text }) {
+  return (
+    <div className="Comment">
+      <UserInfo author={author} />
+      <div className="Comment-text">
+        {text}
+      </div>
+      <CommentDate date={date} />
+    </div>
+  );
+}
+
+Comment.propTypes = {
+  author: PropTypes.shape({
+    name: PropTypes.string,
+    avatarUrl: PropTypes.string.isRequired,
+  }).isRequired,
+  date: PropTypes.instanceOf(Date),
+  text: PropTypes.string,
+};
+
+Comment.defaultProps = {
+  date: new Date(),
+  text: 'default text',
+};
+
 const author = {
   name: 'Fede',
-  avatarUrl: 'https://imagekit.androidphoria.com/wp-content/uploads/clash-royale-pajaro-simpsons.jpg'
-}
+  avatarUrl: 'https://imagekit.androidphoria.com/wp-content/uploads/clash-royale-pajaro-simpsons.jpg',
+};
 ReactDOM.render(<Comment
-  author={author} date={new Date()}
-  text='Esta componente hay que mejorarla'
-/> , document.getElementById('root'));
+  author={author}
+  date={new Date()}
+  text="Esta componente hay que mejorarla"
+/>, document.getElementById('root'));
